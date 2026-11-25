@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check, RefreshCw, UserRound, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import ManagementShell from "@/components/management-shell";
@@ -13,8 +13,7 @@ type RequestRow = {
 };
 
 export default function ParentRequestsPage() {
-  const supabase = createClient();
-  const [tenantId, setTenantId] = useState("");
+  const supabase = useMemo(() => createClient(), []);
   const [requests, setRequests] = useState<RequestRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState("");
@@ -31,24 +30,17 @@ export default function ParentRequestsPage() {
       return;
     }
     const { data: membership, error: membershipError } = await supabase
-      .from("memberships")
-      .select("tenant_id")
-      .eq("user_id", auth.user.id)
-      .eq("is_active", true)
-      .eq("role", "nursery_admin")
-      .limit(1)
-      .maybeSingle();
+      .from("memberships").select("tenant_id").eq("user_id", auth.user.id)
+      .eq("is_active", true).eq("role", "nursery_admin").limit(1).maybeSingle();
     if (membershipError || !membership) {
       setError("هذه الصفحة متاحة لمدير الحضانة فقط.");
       setLoading(false);
       return;
     }
-    setTenantId(membership.tenant_id);
     const { data, error: queryError } = await supabase
       .from("parent_link_requests")
       .select("id,created_at,profiles(full_name,email),children(full_name,child_code)")
-      .eq("tenant_id", membership.tenant_id)
-      .eq("status", "pending")
+      .eq("tenant_id", membership.tenant_id).eq("status", "pending")
       .order("created_at", { ascending: true });
     if (queryError) {
       setError(queryError.message);
@@ -71,12 +63,10 @@ export default function ParentRequestsPage() {
     setError("");
     setNotice("");
     const { error: rpcError } = await supabase.rpc("review_parent_link_request", {
-      request_id_input: id,
-      approve_input: approve,
+      request_id_input: id, approve_input: approve,
     });
-    if (rpcError) {
-      setError(rpcError.message);
-    } else {
+    if (rpcError) setError(rpcError.message);
+    else {
       setNotice(approve ? "تمت الموافقة على طلب ربط ولي الأمر." : "تم رفض طلب الربط.");
       await load();
     }

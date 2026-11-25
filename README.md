@@ -36,6 +36,7 @@
 6. `supabase/006_curriculum.sql`
 7. `supabase/007_assessments_reports.sql`
 8. `supabase/008_parent_auth_linking.sql`
+9. `supabase/009_fix_classroom_tenant_fk.sql` (إصلاح مفتاح ربط الفصول بالحضانة)
 
 استخدم مشروعاً جديداً فارغاً لتجنب تعارض الجداول والسياسات. لا تشغّل `seed-demo.sql` على قاعدة بيانات الإنتاج؛ فهو بيانات اختبار.
 

@@ -42,7 +42,8 @@ create table public.classrooms (
   age_min_months int,
   age_max_months int,
   created_at timestamptz not null default now(),
-  unique (tenant_id, name)
+  unique (tenant_id, name),
+  unique (id, tenant_id)
 );
 
 create table public.children (

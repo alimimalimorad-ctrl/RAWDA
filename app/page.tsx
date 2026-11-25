@@ -1,91 +1,66 @@
-import {
-  Activity, Bell, BookOpen, Building2, CalendarDays, ChevronLeft,
-  ClipboardList, GraduationCap, LayoutDashboard, Settings, ShieldCheck,
-  Users, Wallet, TrendingUp, UserRoundCheck, FileText
-} from "lucide-react";
-import { demoStats, demoNurseries, demoActivities } from "@/lib/demo-data";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Baby, GraduationCap, Users, CalendarCheck, BookOpen, Star, ClipboardList, RefreshCw, CheckCircle2 } from "lucide-react";
+import ManagementShell from "@/components/management-shell";
+import { createClient } from "@/lib/supabase/client";
 
-const nav = [
-  { label: "الرئيسية", icon: LayoutDashboard, active: true },
-  { label: "الحضانات", icon: Building2 },
-  { label: "المستخدمون والصلاحيات", icon: ShieldCheck },
-  { label: "الأطفال وأولياء الأمور", icon: Users, href: "/children" },
-  { label: "الفصول والمعلمات", icon: GraduationCap, href: "/classrooms" },
-  { label: "المناهج والكتب", icon: BookOpen },
-  { label: "طلبات التقديم", icon: ClipboardList },
-  { label: "الاشتراكات والفوترة", icon: Wallet },
-  { label: "التقارير", icon: FileText },
-  { label: "الإعدادات", icon: Settings },
-];
-
-const icons = [Building2, Users, GraduationCap, ClipboardList];
+type Summary = { children:number; classrooms:number; teachers:number; attendance:number };
 
 export default function Home() {
-  return (
-    <main className="app-shell">
-      <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark">ر</div>
-          <div><div className="brand-name">روضة</div><div className="brand-sub">RAWDA PLATFORM</div></div>
-        </div>
-        <div className="side-label">القائمة الرئيسية</div>
-        <nav>
-          {nav.map((item) => {
-            const Icon = item.icon;
-            return <Link key={item.label} className={`nav-item ${item.active ? "active" : ""}`} href={("href" in item && item.href) || "#"}>
-              <Icon size={18} /><span>{item.label}</span>{item.active && <i />}
-            </Link>;
-          })}
-        </nav>
-        <div className="sidebar-bottom">
-          <div className="support-card"><div className="support-icon"><Activity size={18}/></div>
-            <strong>مركز المساعدة</strong><span>نحن هنا لمساعدتك</span>
-          </div>
-          <div className="user-mini"><div className="avatar">م</div><div><b>مدير المنصة</b><small>مالك روضة</small></div><ChevronLeft size={16}/></div>
-        </div>
-      </aside>
+  const router=useRouter();
+  const [name,setName]=useState("حضانتي");
+  const [summary,setSummary]=useState<Summary>({children:0,classrooms:0,teachers:0,attendance:0});
+  const [loading,setLoading]=useState(true),[error,setError]=useState(""),[role,setRole]=useState("");
 
-      <section className="main-area">
-        <header className="topbar">
-          <div className="breadcrumbs">روضة <ChevronLeft size={14}/> <b>لوحة التحكم</b></div>
-          <div className="top-actions"><span className="demo-pill">بيئة تجريبية</span><button className="icon-btn" aria-label="الإشعارات"><Bell size={19}/><i/></button><div className="top-avatar">م</div></div>
-        </header>
-
-        <div className="content">
-          <div className="welcome-row">
-            <div><div className="eyebrow">الثلاثاء، 17 نوفمبر 2026</div><h1>مرحباً بك في روضة <span>👋</span></h1><p>إليك نظرة عامة على أداء المنصة اليوم.</p></div>
-            <Link className="primary-btn" href="/onboarding"><Building2 size={17}/> إضافة حضانة جديدة</Link>
-          </div>
-
-          <div className="notice"><div className="notice-icon"><ShieldCheck size={19}/></div><div><b>أنت تتصفح النسخة التجريبية</b><p>الأرقام والبيانات المعروضة افتراضية للتوضيح فقط، ولا تمثل سجلات حضانات فعلية.</p></div></div>
-
-          <div className="section-heading"><div><h2>مؤشرات المنصة</h2><p>ملخص سريع للنشاط العام</p></div><button className="filter-btn"><CalendarDays size={16}/> آخر 30 يوماً</button></div>
-
-          <div className="stats-grid">
-            {demoStats.map((s, i) => {
-              const Icon = icons[i];
-              return <article className="stat-card" key={s.label}><div className={`stat-icon tone-${i}`}><Icon size={20}/></div><div className="stat-label">{s.label}</div><div className="stat-bottom"><strong>{s.value}</strong><span className="stat-change"><TrendingUp size={14}/> {s.change}</span></div><div className="stat-foot">{s.note}</div></article>;
-            })}
-          </div>
-
-          <div className="two-col">
-            <section className="panel">
-              <div className="panel-head"><div><h2>أحدث الحضانات</h2><p>الحضانات المسجلة في المنصة</p></div><a href="#">عرض الكل <ChevronLeft size={14}/></a></div>
-              <div className="table-wrap"><table><thead><tr><th>الحضانة</th><th>عدد الأطفال</th><th>الحالة</th></tr></thead><tbody>
-                {demoNurseries.map((n) => <tr key={n.name}><td><div className="nursery-cell"><div className="nursery-logo">{n.initial}</div><div><b>{n.name}</b><small>{n.city}</small></div></div></td><td>{n.children}</td><td><span className={`status ${n.status === "نشطة" ? "status-on" : "status-pending"}`}>{n.status}</span></td></tr>)}
-              </tbody></table></div>
-            </section>
-            <section className="panel">
-              <div className="panel-head"><div><h2>آخر الأنشطة</h2><p>مستجدات المنصة</p></div><button className="dots">•••</button></div>
-              <div className="activity-list">{demoActivities.map((a, i) => <div className="activity-item" key={a.title}><div className={`activity-icon activity-${i}`}><a.icon size={17}/></div><div><b>{a.title}</b><p>{a.detail}</p><small>{a.time}</small></div></div>)}</div>
-            </section>
-          </div>
-
-          <section className="quick-panel"><div><div className="quick-icon"><UserRoundCheck size={21}/></div><div><h2>ابدأ إعداد منصتك</h2><p>أكمل إعداد بيانات أول حضانة تجريبية، ثم أضف الفصول والمستخدمين.</p></div></div><Link className="outline-btn" href="/classrooms">إدارة الفصول <ChevronLeft size={16}/></Link></section>
-          <footer>© 2026 روضة RAWDA · منصة إدارة الحضانات والتعليم المبكر <span>نسخة تجريبية 0.1</span></footer>
-        </div>
-      </section>
-    </main>
-  );
+  async function load() {
+    setLoading(true); setError("");
+    try {
+      const supabase=createClient();
+      const {data:{user},error:authError}=await supabase.auth.getUser();
+      if(authError||!user){router.replace("/login");return;}
+      const {data:memberships,error:membershipError}=await supabase.from("memberships").select("tenant_id,role").eq("user_id",user.id).eq("is_active",true).order("created_at",{ascending:true}).limit(1);
+      if(membershipError)throw membershipError;
+      const membership=memberships?.[0];
+      if(!membership){router.replace("/onboarding");return;}
+      if(membership.role==="parent"){router.replace("/portal");return;}
+      setRole(membership.role);
+      const [{data:tenant,error:tenantError},children,rooms,teachers,attendance]=await Promise.all([
+        supabase.from("tenants").select("name").eq("id",membership.tenant_id).maybeSingle(),
+        supabase.from("children").select("id",{count:"exact",head:true}).eq("tenant_id",membership.tenant_id),
+        supabase.from("classrooms").select("id",{count:"exact",head:true}).eq("tenant_id",membership.tenant_id),
+        supabase.from("teachers").select("id",{count:"exact",head:true}).eq("tenant_id",membership.tenant_id),
+        supabase.from("attendance").select("id",{count:"exact",head:true}).eq("tenant_id",membership.tenant_id).eq("attendance_date",new Date().toLocaleDateString("en-CA"))
+      ]);
+      if(tenantError)throw tenantError;
+      for(const result of [children,rooms,teachers,attendance])if(result.error)throw result.error;
+      setName(tenant?.name||"حضانتي");
+      setSummary({children:children.count||0,classrooms:rooms.count||0,teachers:teachers.count||0,attendance:attendance.count||0});
+    } catch(e) { setError(e instanceof Error?e.message:"تعذر تحميل لوحة التحكم."); }
+    finally { setLoading(false); }
+  }
+  useEffect(()=>{void load();},[]);
+  const cards=[
+    {label:"الأطفال المسجلون",value:summary.children,icon:Baby,href:"/children",note:"ملفات الأطفال"},
+    {label:"الفصول الدراسية",value:summary.classrooms,icon:GraduationCap,href:"/classrooms",note:"الفصول والمجموعات"},
+    {label:"المعلمات",value:summary.teachers,icon:Users,href:"/staff",note:"فريق الحضانة"},
+    {label:"سجلات حضور اليوم",value:summary.attendance,icon:CalendarCheck,href:"/attendance",note:"الحضور والغياب"}
+  ];
+  return <ManagementShell title="لوحة التحكم" subtitle={`مرحباً بك في ${name}، هذه مؤشرات مباشرة من قاعدة بيانات الحضانة.`}>
+    <div className="notice"><div className="notice-icon"><CheckCircle2 size={19}/></div><div><b>قاعدة البيانات متصلة</b><p>الأرقام التالية تُقرأ مباشرة من سجلات حضانتك، ولا تُستخدم بيانات تجريبية.</p></div></div>
+    {error&&<p className="form-error">{error}</p>}
+    <div className="section-heading"><div><h2>ملخص الحضانة</h2><p>إحصاءات محدثة عند فتح الصفحة</p></div><button className="outline-btn" onClick={()=>void load()} disabled={loading}><RefreshCw size={15}/> تحديث البيانات</button></div>
+    <div className="stats-grid">{cards.map((card,index)=>{const Icon=card.icon;return <Link className="stat-card" href={card.href} key={card.label} style={{textDecoration:"none",color:"inherit"}}><div className={`stat-icon tone-${index}`}><Icon size={20}/></div><div className="stat-label">{card.label}</div><div className="stat-bottom"><strong>{loading?"—":card.value}</strong></div><div className="stat-foot">{card.note}</div></Link>;})}</div>
+    <div className="two-col">
+      <section className="panel"><div className="panel-head"><div><h2>إدارة الحضانة</h2><p>انتقل مباشرة إلى القسم المطلوب</p></div></div><div className="simple-list">
+        <Link href="/children"><Baby size={18}/> ملفات الأطفال والتسجيل</Link><Link href="/attendance"><CalendarCheck size={18}/> الحضور والغياب اليومي</Link><Link href="/staff"><Users size={18}/> المعلمات وأولياء الأمور</Link><Link href="/classrooms"><GraduationCap size={18}/> الفصول وتوزيع الأطفال</Link>
+      </div></section>
+      <section className="panel"><div className="panel-head"><div><h2>التعليم والمتابعة</h2><p>المناهج وقياس تقدم الطفل</p></div></div><div className="simple-list">
+        <Link href="/curriculum"><BookOpen size={18}/> المناهج والكتب</Link><Link href="/assessments"><Star size={18}/> التقييمات والمهارات</Link><Link href="/reports"><ClipboardList size={18}/> تقارير تقدم الأطفال</Link><Link href="/portal"><Users size={18}/> بوابة ولي الأمر</Link>
+      </div></section>
+    </div>
+    <p className="stat-foot" style={{marginTop:18}}>الصلاحيات تُطبّق من قاعدة البيانات عبر RLS. دور الحساب: {role||"—"}.</p>
+  </ManagementShell>;
 }

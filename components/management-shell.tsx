@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Users, GraduationCap, BookOpen, ChevronLeft, Baby, UserRoundCog, CalendarDays, Heart, Star, FileText } from "lucide-react";
+import { LayoutDashboard, Users, GraduationCap, BookOpen, ChevronLeft, Baby, UserRoundCog, CalendarDays, Heart, Star, FileText, ClipboardList } from "lucide-react";
 
 export default function ManagementShell({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return <main className="app-shell"><aside className="sidebar"><Link href="/" className="brand"><div className="brand-mark">ر</div><div><div className="brand-name">روضة</div><div className="brand-sub">RAWDA PLATFORM</div></div></Link><div className="side-label">القائمة الرئيسية</div><nav>
@@ -8,6 +8,7 @@ export default function ManagementShell({ title, subtitle, children }: { title: 
     <Link className="nav-item" href="/classrooms"><GraduationCap size={18}/><span>الفصول</span></Link>
     <Link className="nav-item" href="/attendance"><CalendarDays size={18}/><span>الحضور والغياب</span></Link>
     <Link className="nav-item" href="/staff"><UserRoundCog size={18}/><span>المعلمات وأولياء الأمور</span></Link>
+    <Link className="nav-item" href="/parent-requests"><ClipboardList size={18}/><span>طلبات ربط ولي الأمر</span></Link>
     <Link className="nav-item" href="/curriculum"><BookOpen size={18}/><span>المناهج والكتب</span></Link>
     <Link className="nav-item" href="/assessments"><Star size={18}/><span>التقييمات</span></Link>
     <Link className="nav-item" href="/reports"><FileText size={18}/><span>تقارير التقدم</span></Link>

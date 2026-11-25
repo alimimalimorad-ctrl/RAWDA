@@ -1,6 +1,18 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
+type CookieOptions = {
+  domain?: string;
+  expires?: Date;
+  httpOnly?: boolean;
+  maxAge?: number;
+  path?: string;
+  sameSite?: boolean | "lax" | "strict" | "none";
+  secure?: boolean;
+  priority?: "low" | "medium" | "high";
+  partitioned?: boolean;
+};
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
@@ -16,7 +28,7 @@ export async function GET(request: NextRequest) {
   const supabase = createServerClient(url, key, {
     cookies: {
       getAll: () => request.cookies.getAll(),
-      setAll(cookies) {
+      setAll(cookies: { name: string; value: string; options?: CookieOptions }[]) {
         cookies.forEach(({ name, value, options }) => request.cookies.set(name, value));
         response = NextResponse.redirect(`${origin}${next}`);
         cookies.forEach(({ name, value, options }) => response.cookies.set(name, value, options));

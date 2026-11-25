@@ -1,0 +1,24 @@
+-- Cover foreign keys used in joins, tenant filters, and cascade operations.
+create index if not exists idx_announcements_tenant on public.announcements(tenant_id);
+create index if not exists idx_assessments_child_tenant_fk on public.assessments(child_id,tenant_id);
+create index if not exists idx_assessments_skill_fk on public.assessments(skill_id);
+create index if not exists idx_assessments_teacher_fk on public.assessments(teacher_id);
+create index if not exists idx_attendance_child_tenant_fk on public.attendance(child_id,tenant_id);
+create index if not exists idx_attendance_class_tenant_fk on public.attendance(classroom_id,tenant_id);
+create index if not exists idx_attendance_recorded_by_fk on public.attendance(recorded_by);
+create index if not exists idx_books_subject_fk on public.books(subject_id);
+create index if not exists idx_classroom_teachers_class_fk on public.classroom_teachers(classroom_id,tenant_id);
+create index if not exists idx_classroom_teachers_teacher_fk on public.classroom_teachers(teacher_id,tenant_id);
+create index if not exists idx_curriculum_units_classroom_fk on public.curriculum_units(classroom_id);
+create index if not exists idx_curriculum_units_tenant_fk on public.curriculum_units(tenant_id);
+create index if not exists idx_daily_lessons_class_fk on public.daily_lessons(classroom_id,tenant_id);
+create index if not exists idx_daily_lessons_subject_fk on public.daily_lessons(subject_id);
+create index if not exists idx_daily_lessons_teacher_fk on public.daily_lessons(teacher_id);
+create index if not exists idx_enrollments_child_fk on public.enrollments(child_id,tenant_id);
+create index if not exists idx_enrollments_class_fk on public.enrollments(classroom_id,tenant_id);
+create index if not exists idx_parent_children_child_fk on public.parent_children(child_id,tenant_id);
+create index if not exists idx_parent_link_requests_child_fk on public.parent_link_requests(child_id,tenant_id);
+create index if not exists idx_parent_link_requests_parent_fk on public.parent_link_requests(parent_user_id);
+create index if not exists idx_parent_link_requests_reviewer_fk on public.parent_link_requests(reviewed_by);
+create index if not exists idx_skills_subject_fk on public.skills(subject_id);
+create index if not exists idx_teachers_user_fk on public.teachers(user_id);

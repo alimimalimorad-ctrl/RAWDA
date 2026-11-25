@@ -12,5 +12,5 @@ export default function ManagementShell({ title, subtitle, children }: { title: 
     <Link className="nav-item" href="/assessments"><Star size={18}/><span>التقييمات</span></Link>
     <Link className="nav-item" href="/reports"><FileText size={18}/><span>تقارير التقدم</span></Link>
     <Link className="nav-item" href="/portal"><Heart size={18}/><span>بوابة ولي الأمر</span></Link>
-  </nav></aside><section className="main-area"><header className="topbar"><div className="breadcrumbs"><Link href="/">روضة</Link><ChevronLeft size={14}/><b>{title}</b></div><span className="demo-pill">بيئة تجريبية</span></header><div className="content"><div className="welcome-row"><div><div className="eyebrow">إدارة الحضانة</div><h1>{title}</h1><p>{subtitle}</p></div></div>{children}<footer>© 2026 روضة RAWDA <span>نسخة تجريبية</span></footer></div></section></main>;
+  </nav></aside><section className="main-area"><header className="topbar"><div className="breadcrumbs"><Link href="/">روضة</Link><ChevronLeft size={14}/><b>{title}</b></div><span className="demo-pill">إدارة روضة</span></header><div className="content"><div className="welcome-row"><div><div className="eyebrow">إدارة الحضانة</div><h1>{title}</h1><p>{subtitle}</p></div></div>{children}<footer>© 2026 روضة RAWDA <span>نسخة تجريبية</span></footer></div></section></main>;
 }
